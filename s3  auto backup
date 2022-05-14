@@ -1,0 +1,14 @@
+aws s3 ls
+mkdir backupdata 
+cd backupdata
+touch date
+aws s3 sync /root/backupdata
+s3://bucketname
+cd backupdata
+
+create a cronjob to automate
+crontab -e (file for script backupdata)
+0 8 * * * * aws s3 sync /root/backupdata s3://date.log
+save the cron file
+systemctl restart crond.service
+crontab -l list th job
