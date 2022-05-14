@@ -1,0 +1,61 @@
+1. Login to Ansible machine. Create SSH keys in Ansible host machine by executing the below command:
+
+ssh-keygen
+2. Copy the public keys(id_rsa.pub) from ansible node each node in /home/ec2-user/.ssh/authorized_keys file. Execute the below command on Ansible and copy the content:
+ sudo cat ~/.ssh/id_rsa.pub
+
+
+3. Now login to target node, execute the below command to open the file
+sudo vi /home/ec2-user/.ssh/authorized_keys
+type shift A and then enter. now 
+    and paste the key in the above file. please do not delete any existing keys.
+
+4. go back to ansible mgmt node, make sure you are able to ssh from ansible mgmt node after copying the keys above:
+ssh private_ip_of_target_node
+now type exit to come out of the target node.
+
+5. Now in ansible mgmt node, now make changes in /etc/ansible/hosts file to include the node you will be installing software. Make sure you add public IP address as highlighted below in green color:
+sudo vi /etc/ansible/hosts
+[localhost]  
+XX.XX.XX.XX ansible_ssh_user=ubuntu ansible_ssh_private_key_file=~/.ssh/id_rsa  ansible_python_interpreter=/usr/bin/python3
+
+6. make changes in playbooks as given below,
+cd ~/playbooks
+
+sudo vi installApache.xml
+Copy the below content
+
+---
+- hosts: localhost
+  become: true
+  tasks:
+    - name: Install apcahe
+      dnf:
+       name=httpd
+       state=latest
+
+    - name: ensure apache started
+      service:
+       name=httpd
+       state=started
+       enabled=yes
+    - name: Create firewall rule for apache service
+      service:
+       name: firewalld
+       state: stopped
+       enabled: false
+    - name: Restart apache service
+      service:
+       name: httpd
+       state: restarted
+
+7. now execute the playbook by running the below command:
+sudo ansible-playbook installApache.xml
+8. This should install Apache on the nodes and should bring the apache up and running.
+9. Now enter public ip address or public dns name of target server by in the browser to see home page of Apache running.
+10.after checking the apache webserver connection copy the static web page and paste it in /etc/HTML/EdGrad.html
+11.save the html file and refresh the ip address of apache webserver in the worker node created
+12.This should make our web page up and running.
+
+Voila!
+
