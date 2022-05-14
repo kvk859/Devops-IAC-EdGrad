@@ -1,0 +1,11 @@
+aws configure 
+user id
+secret access key
+connect to aws
+
+cmds to follow for IAC in terraform
+
+terraform init 
+terraform plan
+terraform validate
+terraform apply 
