@@ -1,0 +1,23 @@
+---
+- hosts: localhost
+  become: true
+  tasks:
+    - name: Install apcahe
+      dnf:
+       name=httpd
+       state=latest
+
+    - name: ensure apache started
+      service:
+       name=httpd
+       state=started
+       enabled=yes
+    - name: Create firewall rule for apache service
+      service:
+       name: firewalld
+       state: stopped
+       enabled: false
+    - name: Restart apache service
+      service:
+       name: httpd
+       state: restarted
